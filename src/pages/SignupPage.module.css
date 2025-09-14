@@ -1,0 +1,74 @@
+/* SignupPage.module.css */
+
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
+  padding: 1rem;
+}
+
+.formContainer {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 28rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color:#059669;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  color: rgb(31, 30, 30);
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.input:focus {
+  border-color: #10b981; /* Tailwind's green-500 */
+  box-shadow: 0 0 0 1px #10b981;
+}
+
+.button {
+  width: 100%;
+  background-color: #059669;
+  color: white;
+  padding: 0.5rem 0;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.button:hover {
+  background-color: #059669; /* Tailwind's green-600 */
+}
+.message {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #374151; /* Neutral text */
+}
+.loginText{
+    color: grey;
+}
+.loginLink{
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
