@@ -11,7 +11,7 @@ import "@/components/styles/Header.css";
 
 interface HeaderProps {
   cartCount?: number;
-  view?: "services" | "parts"; 
+  view?: "services" | "parts";
   onViewChange?: (v: "services" | "parts") => void;
 }
 
@@ -43,7 +43,7 @@ export const Header = ({
     logout();
   };
 
-  // ✅ helper to navigate home + set view
+  // ✅ Helper: Navigate home + set correct view
   const goHomeAndSetView = (targetView: "services" | "parts") => {
     if (window.location.pathname !== "/") {
       router.push("/");
@@ -85,6 +85,7 @@ export const Header = ({
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
 
+            {/* Desktop Profile Dropdown */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-700 hover:text-blue-600 transition-colors"
@@ -116,7 +117,7 @@ export const Header = ({
       {/* ✅ Mobile Bottom Nav */}
       <nav className="mobile-nav md:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-300 shadow-lg z-50">
         <div className="flex justify-around items-center py-2">
-          {/* ✅ Navigate + toggle view */}
+          {/* Services Toggle */}
           <button
             onClick={() => goHomeAndSetView("services")}
             className={`nav-item flex flex-col items-center ${
@@ -129,6 +130,7 @@ export const Header = ({
             <span className="text-xs font-medium">Services</span>
           </button>
 
+          {/* Shop Toggle */}
           <button
             onClick={() => goHomeAndSetView("parts")}
             className={`nav-item flex flex-col items-center ${
@@ -141,6 +143,7 @@ export const Header = ({
             <span className="text-xs font-medium">Shop</span>
           </button>
 
+          {/* Search */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className="nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
@@ -149,7 +152,7 @@ export const Header = ({
             <span className="text-xs font-medium">Search</span>
           </button>
 
-          {/* Cart Button */}
+          {/* Cart */}
           <Link
             href="/cart"
             className="relative nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
@@ -161,34 +164,14 @@ export const Header = ({
             <span className="text-xs font-medium">Cart</span>
           </Link>
 
-          {/* Profile Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
-            >
-              <User className="h-5 w-5" />
-              <span className="text-xs font-medium">Profile</span>
-            </button>
-
-            {menuOpen && (
-              <div className="absolute bottom-12 right-0 bg-white border border-gray-300 shadow-lg rounded-lg w-40 py-2">
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
-                >
-                  <LogOut className="h-4 w-4" /> Logout
-                </button>
-              </div>
-            )}
-          </div>
+          {/* ✅ Direct Profile Navigation */}
+          <button
+            onClick={() => router.push("/profile")}
+            className="nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
+          >
+            <User className="h-5 w-5" />
+            <span className="text-xs font-medium">Profile</span>
+          </button>
         </div>
       </nav>
 
