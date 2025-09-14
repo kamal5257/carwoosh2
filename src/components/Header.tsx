@@ -7,7 +7,7 @@ import { ShoppingCart, User, Search, Wrench, Home, LogOut } from "lucide-react";
 import { logout } from "@/utils/auth"; 
 import { getCartItems } from "@/utils/cart"; // ✅ utility to read cart from localStorage or API
 
-import "@/components/styles/header.css";
+import "/styles/header.css";
 
 interface HeaderProps {
   cartCount?: number; // optional prop (fallback to internal state)
