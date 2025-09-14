@@ -3,7 +3,7 @@ import {jwtDecode} from "jwt-decode";
 
 export interface DecodedToken {
   exp: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const TOKEN_KEY = "token";
