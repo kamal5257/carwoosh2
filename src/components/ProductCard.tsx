@@ -7,7 +7,7 @@ interface ProductCardProps {
   onAddToCart: (id: number) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, name, onAddToCart }) => {
   return (
     <div className="p-4 bg-white shadow-md rounded-md flex flex-col justify-between">
       <h3 className="text-lg font-bold">{name}</h3>

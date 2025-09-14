@@ -19,7 +19,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import NextLink from "next/link";
 import { motion } from "framer-motion";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse  } from "@react-oauth/google";
 
 export default function LoginPage() {
   const [userName, setUserName] = useState("");
@@ -58,15 +58,19 @@ export default function LoginPage() {
         localStorage.setItem("token", token);
         setTimeout(() => router.push("/"), 1000);
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   // ✅ Handle Google Login
-  const handleGoogleSuccess = async (credentialResponse: any) => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     console.log("Google Credential:", credentialResponse);
     try {
       const response = await fetch("http://localhost:8089/api/users/google-login", {

@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { Header } from "@/components/Header";
 import { Plus, Minus, X } from "lucide-react"; // ✅ Added X icon
-import { lightGreen, red } from "@mui/material/colors";
 
 type CartItem = {
   id: number;

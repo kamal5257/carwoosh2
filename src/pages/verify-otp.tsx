@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams  } from "next/navigation";
 
-interface VerifyOTPProps {
-  username?: string; // Optional: you can pass username via query params or state
-}
+// interface VerifyOTPProps {
+//   username?: string; // Optional: you can pass username via query params or state
+// }
 
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState("");
