@@ -224,7 +224,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ item, view, isMobile = false 
         variant="contained"
         color="primary"
         size="small"
-        sx={{ borderRadius: 2, textTransform: "none", px: 1.5, fontSize: "0.7rem", minWidth: "auto" }}
+        sx={{ borderRadius: 2, textTransform: "none", px: 1.5, fontSize: "0.7rem", minWidth: "auto", fontWeight: "600", fontFamily: "inherit" }}
         onClick={() => {
           if (view === "parts") {
             addToCart({

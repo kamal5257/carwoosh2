@@ -10,9 +10,10 @@ import { useRouter, useSearchParams  } from "next/navigation";
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState("");
   const router = useRouter();
-   const searchParams = useSearchParams();
-  const username = searchParams.get("username");
-  const txnId = searchParams.get("txnId");
+  const searchParams = useSearchParams();
+  const safeParams = searchParams ?? new URLSearchParams();
+  const username : string = safeParams.get("username") ?? "";
+  const txnId : string = safeParams.get("txnId") ?? "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ export default function VerifyOTPPage() {
 
       if (data.statusCode === "APP_001") {
         alert("OTP verified successfully! You can reset your password now.");
-        router.push(`/ResetPassword?txnId=${encodeURIComponent(data.txnId)}&usernName=${encodeURIComponent(username)}`); // Redirect to reset password page
+        router.push(`/ResetPassword?txnId=${encodeURIComponent(data.txnId)}&username=${encodeURIComponent(username)}`); // Redirect to reset password page
       } else {
         alert(data.message || "Invalid OTP. Please try again.");
       }

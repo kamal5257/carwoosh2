@@ -10,8 +10,9 @@ export default function ResetPasswordPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const username = searchParams.get("usernName"); // Pass username from previous step
-  const txnId = searchParams.get("txnId"); // Pass txnId from previous step
+  const safeParams = searchParams ?? new URLSearchParams();
+  const username = safeParams.get("username"); // Pass username from previous step
+  const txnId = safeParams.get("txnId"); // Pass txnId from previous step
 
   const validate = (): boolean => {
     let valid = true;
