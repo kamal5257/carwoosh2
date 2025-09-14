@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from "react";
 import {
   Box,
-  Grid,
   Paper,
   Typography,
   Button,
@@ -16,7 +15,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { Header } from "@/components/Header";
-import { Plus, Minus, Trash2 } from "lucide-react";
+import { Plus, Minus, X } from "lucide-react"; // ✅ Added X icon
+import { lightGreen, red } from "@mui/material/colors";
 
 type CartItem = {
   id: number;
@@ -39,14 +39,10 @@ const CartPage: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const totals = useMemo(() => {
-    const subtotal = cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const discount = cart.reduce(
       (sum, item) =>
-        sum +
-        (item.discount ? (item.price * item.discount) / 100 * item.quantity : 0),
+        sum + (item.discount ? (item.price * item.discount) / 100 * item.quantity : 0),
       0
     );
     const total = subtotal - discount + shipping;
@@ -56,9 +52,7 @@ const CartPage: React.FC = () => {
   const updateQuantity = (id: number, change: number) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(item.quantity + change, 1) }
-          : item
+        item.id === id ? { ...item, quantity: Math.max(item.quantity + change, 1) } : item
       )
     );
   };
@@ -78,12 +72,12 @@ const CartPage: React.FC = () => {
         minHeight="100vh"
         display="flex"
         justifyContent="center"
-        alignItems="flex-start"
         paddingTop={{ xs: "60px", md: "80px" }}
+        pb={isMobile ? "80px" : 0}
       >
-        <Grid container spacing={4} maxWidth="md">
+        <Box display="flex" flexDirection={isMobile ? "column" : "row"} gap={4} width="100%" maxWidth="md">
           {/* LEFT: CART ITEMS */}
-          <Grid item xs={12} md={8}>
+          <Box flex={isMobile ? "unset" : 2}>
             <Paper
               elevation={0}
               sx={{
@@ -108,88 +102,86 @@ const CartPage: React.FC = () => {
                 {cart.map((item) => (
                   <Box
                     key={item.id}
+                    position="relative"
                     display="flex"
-                    alignItems="center"
+                    flexDirection="row"
+                    alignItems="flex-start"
                     justifyContent="space-between"
-                    sx={{
-                      gap: 2,
-                      py: 1,
-                      borderBottom: "1px solid #f0f0f0",
-                    }}
+                    sx={{ gap: 2, py: 1, borderBottom: "1px solid #f0f0f0" }}
                   >
-                    {/* Product Info */}
-                    <Box display="flex" alignItems="center" flex={1} gap={2}>
+                    {/* X ICON (REMOVE) - Positioned at top right */}
+                    <IconButton
+                      size="small"
+                    
+                      onClick={() => removeItem(item.id)}
+                      sx={{
+                        position: "absolute",
+                        top: 4,
+                        right: 4,
+                        color: "red",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <X size={16} />
+                    </IconButton>
+
+                    {/* LEFT: IMAGE + TEXT + QUANTITY */}
+                    <Box display="flex" gap={2} flex={1}>
                       <Box
                         component="img"
                         src={item.image}
                         alt={item.name}
-                        sx={{
-                          width: 70,
-                          height: 70,
-                          borderRadius: 2,
-                          objectFit: "cover",
-                        }}
+                        sx={{ width: 70, height: 70, borderRadius: 2, objectFit: "cover" }}
                       />
-                      <Box>
+                      <Box flex={1}>
+                        {/* Title */}
                         <Typography fontWeight={600}>{item.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Service
-                        </Typography>
-                        <Button
-                          variant="text"
-                          size="small"
-                          color="error"
-                          onClick={() => removeItem(item.id)}
-                          sx={{
-                            textTransform: "none",
-                            fontSize: "0.75rem",
-                            p: 0,
-                            mt: 0.5,
-                          }}
-                        >
-                          Remove
-                        </Button>
+
+                        {/* Quantity (under title always) */}
+                        <Stack direction="row" spacing={1} alignItems="center" mt={1}>
+                          <IconButton size="small" onClick={() => updateQuantity(item.id, -1)}>
+                            <Minus size={16} />
+                          </IconButton>
+                          <Typography fontWeight={500}>{item.quantity}</Typography>
+                          <IconButton size="small" onClick={() => updateQuantity(item.id, 1)}>
+                            <Plus size={16} />
+                          </IconButton>
+                        </Stack>
                       </Box>
                     </Box>
 
-                    {/* Quantity */}
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <IconButton size="small" onClick={() => updateQuantity(item.id, -1)}>
-                        <Minus size={16} />
-                      </IconButton>
-                      <Typography fontWeight={500}>{item.quantity}</Typography>
-                      <IconButton size="small" onClick={() => updateQuantity(item.id, 1)}>
-                        <Plus size={16} />
-                      </IconButton>
-                    </Stack>
+                    {/* RIGHT: PRICE & TOTAL */}
+                    {/* RIGHT: PRICE & TOTAL */}
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="flex-end"
+                      pr={1}
+                      mt={3} // ✅ added margin-top to push price below the cross icon
+                    >
+                      <Typography color="text.secondary" fontSize="0.9rem">
+                        ₹{item.price.toLocaleString()}
+                      </Typography>
+                      <Typography fontWeight={600}>
+                        ₹{(item.price * item.quantity).toLocaleString()}
+                      </Typography>
+                    </Box>
 
-                    {/* Price & Total */}
-                    <Typography width="70px" textAlign="right" color="text.secondary">
-                      ₹{item.price.toLocaleString()}
-                    </Typography>
-                    <Typography width="80px" textAlign="right" fontWeight={600}>
-                      ₹{(item.price * item.quantity).toLocaleString()}
-                    </Typography>
                   </Box>
                 ))}
               </Stack>
 
               <Button
                 variant="text"
-                sx={{
-                  mt: 3,
-                  textTransform: "none",
-                  color: "primary.main",
-                  fontWeight: 500,
-                }}
+                sx={{ mt: 3, textTransform: "none", color: "primary.main", fontWeight: 500 }}
               >
                 ← Continue Shopping
               </Button>
             </Paper>
-          </Grid>
+          </Box>
 
           {/* RIGHT: ORDER SUMMARY */}
-          <Grid item xs={12} md={4}>
+          <Box flex={isMobile ? "unset" : 1}>
             <Paper
               elevation={0}
               sx={{
@@ -225,17 +217,8 @@ const CartPage: React.FC = () => {
                 <MenuItem value={15}>Express Delivery – ₹15</MenuItem>
               </TextField>
 
-              <TextField
-                label="Promo Code"
-                size="small"
-                fullWidth
-                placeholder="Enter your code"
-              />
-              <Button
-                variant="outlined"
-                fullWidth
-                sx={{ textTransform: "none", borderRadius: 2 }}
-              >
+              <TextField label="Promo Code" size="small" fullWidth placeholder="Enter your code" />
+              <Button variant="outlined" fullWidth sx={{ textTransform: "none", borderRadius: 2 }}>
                 Apply
               </Button>
 
@@ -265,8 +248,8 @@ const CartPage: React.FC = () => {
                 Checkout
               </Button>
             </Paper>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Box>
     </>
   );
