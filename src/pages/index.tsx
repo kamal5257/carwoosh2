@@ -62,7 +62,12 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <Header cartCount={4} />
+      <Header
+        cartCount={4}
+        view={view} // ✅ passes current state
+        onViewChange={(newView) => setView(newView)} // ✅ updates state when clicked in Header
+      />
+
 
       <Box
         px={{ xs: 2, md: 12 }}
@@ -130,7 +135,7 @@ const HomePage: React.FC = () => {
           gap={isMobile ? 1 : 2}
           justifyContent={isMobile ? "center" : "flex-start"}
           paddingLeft={isMobile ? 0 : 10}
-          
+
         >
           {data.map((item) => (
             <Box
