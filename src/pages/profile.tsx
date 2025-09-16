@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Plus, Trash2, Pencil } from "lucide-react";
 
@@ -12,16 +12,16 @@ interface Address {
   zip: string;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://carwoosh.onrender.com";
+
 const ProfilePage = () => {
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john@example.com");
-  const [phone, setPhone] = useState("9876543210");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [avatar, setAvatar] = useState<string | null>(null);
 
-  const [addresses, setAddresses] = useState<Address[]>([
-    { id: 1, line1: "123 Main Street", city: "Mumbai", state: "MH", zip: "400001" },
-  ]);
-
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loading, setLoading] = useState(true);
   const [newAddress, setNewAddress] = useState<Address>({
     id: 0,
     line1: "",
@@ -30,41 +30,126 @@ const ProfilePage = () => {
     zip: "",
   });
 
-  // ✅ handle profile image upload
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setAvatar(reader.result as string);
-      reader.readAsDataURL(file);
+  // Fetch user profile & addresses on load
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const res = await fetch(`${API_BASE}/api/users/user-details`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}), // ✅ add token if present
+          },
+        });
+        
+        if (!res.ok) throw new Error("Failed to load user data");
+        const data = await res.json();
+        const user = data.data || data; // Adjust based on actual response structure
+        setName(user.name);
+        setEmail(user.email);
+        setPhone(user.mobileNumber || "");
+        setAvatar(`${user.profilePic || null}`);
+        // setAvatar( null);
+        setAddresses(user.addresses || []);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+ const [uploading, setUploading] = useState(false);
+
+const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  setUploading(true);
+  console.log("Uploading file:", uploading);
+  try {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    const res = await fetch(`${API_BASE}/api/users/upload-profile`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Failed to upload profile picture");
+    const data = await res.json();
+
+    setAvatar(data.profilePicUrl || URL.createObjectURL(file));
+  } catch (error) {
+    console.error("Error uploading profile pic:", error);
+    alert("Upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
+
+  // Save Profile API
+  const saveProfile = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/user`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, avatar }),
+      });
+      if (!res.ok) throw new Error("Failed to update profile");
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      alert("Could not save profile. Try again.");
     }
   };
 
-  // ✅ add or update address
-  const saveAddress = () => {
+  // Add / Update Address API
+  const saveAddress = async () => {
     if (!newAddress.line1.trim()) return;
-    if (newAddress.id) {
-      // update existing
-      setAddresses((prev) =>
-        prev.map((addr) => (addr.id === newAddress.id ? newAddress : addr))
-      );
-    } else {
-      // add new
-      setAddresses((prev) => [
-        ...prev,
-        { ...newAddress, id: Date.now() },
-      ]);
+
+    try {
+      if (newAddress.id) {
+        // Update address logic here if needed
+      } else {
+        const res = await fetch(`${API_BASE}/api/addresses`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newAddress),
+        });
+        if (!res.ok) throw new Error("Failed to add address");
+        const added = await res.json();
+        setAddresses((prev) => [...prev, added]);
+      }
+      setNewAddress({ id: 0, line1: "", city: "", state: "", zip: "" });
+    } catch (error) {
+      console.error("Error adding address:", error);
+      alert("Could not save address.");
     }
-    setNewAddress({ id: 0, line1: "", city: "", state: "", zip: "" });
   };
 
-  const editAddress = (addr: Address) => setNewAddress(addr);
-  const deleteAddress = (id: number) =>
-    setAddresses((prev) => prev.filter((addr) => addr.id !== id));
+  // Delete Address API
+  const deleteAddress = async (id: number) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/addresses/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete address");
+      setAddresses((prev) => prev.filter((addr) => addr.id !== id));
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      alert("Could not delete address.");
+    }
+  };
+
+  if (loading) return <div className="text-center p-10">Loading profile...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 pt-24">
-      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow p-6">
+    <div className="min-h-screen bg-gray-100 p-6 pt-24 text-gray-900">
+      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
         {/* Profile Image */}
         <div className="flex flex-col items-center">
           <div className="relative w-24 h-24 mb-4">
@@ -72,9 +157,9 @@ const ProfilePage = () => {
               src={avatar || "/default-avatar.png"}
               alt="Profile"
               fill
-              className="rounded-full object-cover border"
+              className="rounded-full object-cover border border-gray-300 shadow-sm"
             />
-            <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer">
+            <label className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full cursor-pointer shadow-md">
               <input type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
               <Pencil className="w-4 h-4" />
             </label>
@@ -82,59 +167,56 @@ const ProfilePage = () => {
 
           {/* Profile Info */}
           <input
-            className="border p-2 rounded w-full mb-2"
+            className="border border-gray-300 bg-gray-50 p-2 rounded w-full mb-2 focus:ring focus:ring-blue-200"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Name"
           />
           <input
-            className="border p-2 rounded w-full mb-2"
+            className="border border-gray-300 bg-gray-50 p-2 rounded w-full mb-2 focus:ring focus:ring-blue-200"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
           />
           <input
-            className="border p-2 rounded w-full mb-4"
+            className="border border-gray-300 bg-gray-50 p-2 rounded w-full mb-4 focus:ring focus:ring-blue-200"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Phone"
           />
 
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition">
+          <button
+            onClick={saveProfile}
+            className="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
+          >
             Save Profile
           </button>
         </div>
 
         {/* Address Section */}
         <div className="mt-8">
-          <h2 className="text-lg font-bold mb-4">Delivery Addresses</h2>
+          <h2 className="text-lg font-bold mb-4 text-gray-900">Delivery Addresses</h2>
 
           {addresses.length === 0 && (
-            <p className="text-gray-500 text-sm mb-3">No addresses added yet.</p>
+            <p className="text-gray-700 text-sm mb-3">No addresses added yet.</p>
           )}
 
           {addresses.map((addr) => (
             <div
               key={addr.id}
-              className="flex justify-between items-start border p-3 rounded-xl mb-3"
+              className="flex justify-between items-start border border-gray-200 bg-gray-50 p-3 rounded-xl mb-3"
             >
-              <div>
-                <p className="font-semibold">{addr.line1}</p>
-                <p className="text-sm text-gray-600">
+              <div className="space-y-1">
+                <p className="font-semibold text-gray-900">{addr.line1}</p>
+                <p className="text-sm text-gray-800">
                   {addr.city}, {addr.state} {addr.zip}
                 </p>
               </div>
               <div className="flex gap-2">
-                <button
-                  onClick={() => editAddress(addr)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
+                <button onClick={() => setNewAddress(addr)} className="text-blue-600 hover:text-blue-800">
                   <Pencil className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={() => deleteAddress(addr.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
+                <button onClick={() => deleteAddress(addr.id)} className="text-red-600 hover:text-red-800">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -142,29 +224,29 @@ const ProfilePage = () => {
           ))}
 
           {/* Add/Edit Address Form */}
-          <div className="mt-4 border p-4 rounded-xl bg-gray-50">
+          <div className="mt-4 border border-gray-300 p-4 rounded-xl bg-white shadow">
             <input
-              className="border p-2 rounded w-full mb-2"
+              className="border border-gray-300 p-2 rounded w-full mb-2 bg-gray-50"
               placeholder="Address line"
               value={newAddress.line1}
               onChange={(e) => setNewAddress({ ...newAddress, line1: e.target.value })}
             />
             <div className="grid grid-cols-2 gap-2 mb-2">
               <input
-                className="border p-2 rounded"
+                className="border border-gray-300 p-2 rounded bg-gray-50"
                 placeholder="City"
                 value={newAddress.city}
                 onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
               />
               <input
-                className="border p-2 rounded"
+                className="border border-gray-300 p-2 rounded bg-gray-50"
                 placeholder="State"
                 value={newAddress.state}
                 onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
               />
             </div>
             <input
-              className="border p-2 rounded w-full mb-2"
+              className="border border-gray-300 p-2 rounded w-full mb-2 bg-gray-50"
               placeholder="ZIP"
               value={newAddress.zip}
               onChange={(e) => setNewAddress({ ...newAddress, zip: e.target.value })}

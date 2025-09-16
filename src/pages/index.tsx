@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getToken, isTokenExpired } from "@/utils/auth";
+import { getToken, isTokenExpired, logout} from "@/utils/auth";
 import { Header } from "@/components/Header";
 import { addToCart } from "@/utils/cart";
 import {
@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     const token = getToken();
     if (!token || isTokenExpired(token)) {
-      // logout();
+      logout();
     }
   }, []);
 

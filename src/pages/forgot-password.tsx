@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:8089/api/users/forgotPassword",
+        "https://carwoosh.onrender.com/api/users/forgotPassword",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

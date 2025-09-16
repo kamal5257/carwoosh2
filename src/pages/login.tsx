@@ -39,7 +39,7 @@ export default function LoginPage() {
 
     try {
       const encodedPassword = btoa(password);
-      const response = await fetch("http://localhost:8089/api/users/authenticate", {
+      const response = await fetch("https://carwoosh.onrender.com/api/users/authenticate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userName, password: encodedPassword }),
@@ -55,7 +55,8 @@ export default function LoginPage() {
        const token = data.token || data.data?.token;
     if (data.statusCode === "APP_001" && token) {
         setSuccess("✅ Login successful! Redirecting...");
-        localStorage.setItem("token", token);
+        localStorage.setItem("token", token.accessToken || token);
+        console.log("Stored token:", token.accessToken || token);
         setTimeout(() => router.push("/"), 1000);
       }
     } catch (err: unknown) {
@@ -73,7 +74,7 @@ export default function LoginPage() {
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     console.log("Google Credential:", credentialResponse);
     try {
-      const response = await fetch("http://localhost:8089/api/users/google-login", {
+      const response = await fetch("https://carwoosh.onrender.com/api/users/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -81,6 +82,7 @@ export default function LoginPage() {
 
       const data = await response.json();
       if (response.ok && data.statusCode === "APP_001") {
+        
         localStorage.setItem("token", data.token);
         router.push("/");
       } else {

@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
     if (!validate()) return;
 
     try {
-      const response = await fetch("http://localhost:8089/api/users/reset-password", {
+      const response = await fetch("https://carwoosh.onrender.com/api/users/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ "username":username, "txnId":txnId, "newPassword": password }),

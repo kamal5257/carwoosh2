@@ -25,7 +25,7 @@ export default function VerifyOTPPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:8089/api/users/verify-otp",
+        "https://carwoosh.onrender.com/api/users/verify-otp",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
