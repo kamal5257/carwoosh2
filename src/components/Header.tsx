@@ -13,13 +13,16 @@ interface HeaderProps {
   cartCount?: number;
   view?: "services" | "parts";
   onViewChange?: (v: "services" | "parts") => void;
+  onSearch?: (query: string, context: "services" | "parts") => void; // NEW
 }
 
 export const Header = ({
   cartCount: externalCount = 0,
-  view,
+  view = "services",
   onViewChange,
+  onSearch,
 }: HeaderProps) => {
+  const [searchQuery, setSearchQuery] = useState(""); // NEW
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState<number>(externalCount);
@@ -43,7 +46,12 @@ export const Header = ({
     logout();
   };
 
-  // ✅ Helper: Navigate home + set correct view
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (onSearch) onSearch(query, view); // NEW: pass query + context to parent
+  };
+
   const goHomeAndSetView = (targetView: "services" | "parts") => {
     if (window.location.pathname !== "/") {
       router.push("/");
@@ -55,10 +63,9 @@ export const Header = ({
 
   return (
     <>
-      {/* ✅ Desktop Header */}
+      {/* Desktop Header */}
       <header className="desktop-header hidden md:flex fixed top-0 left-0 right-0 bg-gray-50 border-b border-gray-300 shadow-sm z-50">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          {/* Left: Logo */}
           <Link
             href="/"
             className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
@@ -66,12 +73,14 @@ export const Header = ({
             CarCare
           </Link>
 
-          {/* Center: Search Bar */}
+          {/* Desktop Search */}
           <div className="desktop-search w-full max-w-lg mx-6">
             <input
               type="text"
-              placeholder="Search for services, products..."
+              placeholder={`Search ${view === "services" ? "services" : "products"}...`}
               className="search-input w-full px-3 py-1 rounded-md border border-gray-400 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </div>
 
@@ -85,7 +94,6 @@ export const Header = ({
               {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </Link>
 
-            {/* Desktop Profile Dropdown */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="text-gray-700 hover:text-blue-600 transition-colors"
@@ -114,10 +122,9 @@ export const Header = ({
         </div>
       </header>
 
-      {/* ✅ Mobile Bottom Nav */}
+      {/* Mobile Bottom Nav */}
       <nav className="mobile-nav md:hidden fixed bottom-0 left-0 right-0 bg-gray-50 border-t border-gray-300 shadow-lg z-50">
         <div className="flex justify-around items-center py-2">
-          {/* Services Toggle */}
           <button
             onClick={() => goHomeAndSetView("services")}
             className={`nav-item flex flex-col items-center ${
@@ -130,7 +137,6 @@ export const Header = ({
             <span className="text-xs font-medium">Services</span>
           </button>
 
-          {/* Shop Toggle */}
           <button
             onClick={() => goHomeAndSetView("parts")}
             className={`nav-item flex flex-col items-center ${
@@ -143,16 +149,6 @@ export const Header = ({
             <span className="text-xs font-medium">Shop</span>
           </button>
 
-          {/* Search */}
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
-          >
-            <Search className="h-5 w-5" />
-            <span className="text-xs font-medium">Search</span>
-          </button>
-
-          {/* Cart */}
           <Link
             href="/cart"
             className="relative nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
@@ -164,7 +160,6 @@ export const Header = ({
             <span className="text-xs font-medium">Cart</span>
           </Link>
 
-          {/* ✅ Direct Profile Navigation */}
           <button
             onClick={() => router.push("/profile")}
             className="nav-item flex flex-col items-center text-gray-700 hover:text-blue-600"
@@ -181,9 +176,11 @@ export const Header = ({
           <div className="bg-gray-50 rounded-xl shadow-lg w-[90%] max-w-md p-4">
             <input
               type="text"
-              placeholder="Search services, products..."
-              className="search-input text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-600"
+              placeholder={`Search ${view === "services" ? "services" : "products"}...`}
+              value={searchQuery}
+              onChange={handleSearchChange}
               autoFocus
+              className="search-input text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-600"
             />
             <div className="flex justify-end mt-2">
               <button

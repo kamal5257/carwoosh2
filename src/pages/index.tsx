@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getToken, isTokenExpired, logout} from "@/utils/auth";
+import { getToken, isTokenExpired, logout } from "@/utils/auth";
 import { Header } from "@/components/Header";
 import { addToCart } from "@/utils/cart";
+import { BookService } from "@/components/BookService";
 import {
   Box,
   Paper,
@@ -50,6 +51,19 @@ const HomePage: React.FC = () => {
   const [view, setView] = useState<ViewType>("services");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [bookOpen, setBookOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<Item | null>(null);
+  // const [addresses, setAddresses] = useState([]);
+  // const [vehicles, setVehicles] = useState([]);
+
+  const userAddresses = [
+    { id: 1, line1: "123 Main St", city: "Delhi", state: "DL", zip: "110001" },
+    { id: 2, line1: "456 Market Rd", city: "Mumbai", state: "MH", zip: "400001" },
+  ];
+  const userVehicles = [
+    { id: 1, name: "Honda City", model: "2020", number: "DL1AB1234" },
+    { id: 2, name: "Suzuki Swift", model: "2019", number: "MH2XY5678" },
+  ];
 
   useEffect(() => {
     const token = getToken();
@@ -60,12 +74,31 @@ const HomePage: React.FC = () => {
 
   const data = view === "services" ? services : parts;
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtered list based on current view and search query
+  const filteredData = (view === "services" ? services : parts).filter(item =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleBookClick = (service: Item) => {
+    setSelectedService(service);
+    setBookOpen(true);
+  };
+
+
   return (
     <>
       <Header
         cartCount={4}
         view={view} // ✅ passes current state
-        onViewChange={(newView) => setView(newView)} // ✅ updates state when clicked in Header
+        onViewChange={(newView) => {
+          setView(newView);
+          setSearchQuery(""); // reset search when view changes
+        }}
+        onSearch={(query, context) => {
+          if (context === view) setSearchQuery(query); // only filter current view
+        }}
       />
 
 
@@ -76,6 +109,19 @@ const HomePage: React.FC = () => {
         bgcolor="#f5f5f5"
         pt={{ xs: "60px", md: "80px" }}
       >
+
+        {/* Mobile Search Bar */}
+        {isMobile && (
+          <Box mb={2} px={2}>
+            <input
+              type="text"
+              placeholder={`Search ${view === "services" ? "services" : "products"}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-3 py-2 rounded-md border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-gray-900"
+            />
+          </Box>
+        )}
         {/* Toggle Buttons (Desktop Only) */}
         {!isMobile && (
           <Stack direction="row" justifyContent="center" mb={4}>
@@ -137,19 +183,34 @@ const HomePage: React.FC = () => {
           paddingLeft={isMobile ? 0 : 10}
 
         >
-          {data.map((item) => (
-            <Box
-              key={item.id}
-              flex={`0 0 ${isMobile ? "48%" : "22%"}`}
-              maxWidth={isMobile ? "48%" : "22%"}
-              boxShadow={3}
-              borderRadius={3}
-            >
-              <ServiceCard item={item} view={view} isMobile={isMobile} />
+          {filteredData.map(item => (
+            <Box key={item.id} flex={`0 0 ${isMobile ? "48%" : "22%"}`} maxWidth={isMobile ? "48%" : "22%"}>
+              <ServiceCard
+                item={item}
+                view={view}
+                isMobile={isMobile}
+                onBookClick={handleBookClick} // pass book click handler
+              />
             </Box>
           ))}
         </Box>
       </Box>
+
+      {/* BookService Modal */}
+      {selectedService && (
+        <BookService
+          open={bookOpen}
+          onClose={() => setBookOpen(false)}
+          service={selectedService}
+          addresses={userAddresses}
+          vehicles={userVehicles}
+          onConfirm={(data) => {
+            console.log("Booking Confirmed:", data);
+            alert("Service booked successfully!");
+            setBookOpen(false);
+          }}
+        />
+      )}
     </>
   );
 };
@@ -158,9 +219,10 @@ interface ServiceCardProps {
   item: Item;
   view: ViewType;
   isMobile?: boolean;
+  onBookClick?: (service: Item) => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ item, view, isMobile = false }) => (
+const ServiceCard: React.FC<ServiceCardProps> = ({ item, view, isMobile = false, onBookClick }) => (
   <Paper
     elevation={3}
     sx={{
@@ -238,6 +300,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ item, view, isMobile = false 
               price: item.price,
               image: item.image,
             });
+          }
+          else{
+            onBookClick?.(item); // open booking modal
           }
         }}
       >

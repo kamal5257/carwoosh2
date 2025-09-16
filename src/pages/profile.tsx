@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2, Pencil } from "lucide-react";
+import { Plus, Trash2, Pencil, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/router";
+
+
 
 interface Address {
   id: number;
@@ -30,6 +33,8 @@ const ProfilePage = () => {
     zip: "",
   });
 
+  const router = useRouter();
+
   // Fetch user profile & addresses on load
   useEffect(() => {
     const fetchUserData = async () => {
@@ -42,7 +47,7 @@ const ProfilePage = () => {
             ...(token ? { Authorization: `Bearer ${token}` } : {}), // ✅ add token if present
           },
         });
-        
+
         if (!res.ok) throw new Error("Failed to load user data");
         const data = await res.json();
         const user = data.data || data; // Adjust based on actual response structure
@@ -61,36 +66,36 @@ const ProfilePage = () => {
     fetchUserData();
   }, []);
 
- const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  setUploading(true);
-  console.log("Uploading file:", uploading);
-  try {
-    const token = localStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("file", file);
-  
-    const res = await fetch(`${API_BASE}/api/users/upload-profile`, {
-      method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      body: formData,
-    });
+    setUploading(true);
+    console.log("Uploading file:", uploading);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("file", file);
 
-    if (!res.ok) throw new Error("Failed to upload profile picture");
-    const data = await res.json();
+      const res = await fetch(`${API_BASE}/api/users/upload-profile`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
+      });
 
-    setAvatar(data.profilePicUrl || URL.createObjectURL(file));
-  } catch (error) {
-    console.error("Error uploading profile pic:", error);
-    alert("Upload failed");
-  } finally {
-    setUploading(false);
-  }
-};
+      if (!res.ok) throw new Error("Failed to upload profile picture");
+      const data = await res.json();
+
+      setAvatar(data.profilePicUrl || URL.createObjectURL(file));
+    } catch (error) {
+      console.error("Error uploading profile pic:", error);
+      alert("Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
 
 
   // Save Profile API
@@ -149,7 +154,15 @@ const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 pt-24 text-gray-900">
-      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
+      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-6 border border-gray-200 relative">
+
+        <button
+          onClick={() => router.push("/")}
+          className="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 transition"
+          title="Back to Home"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-700" />
+        </button>
         {/* Profile Image */}
         <div className="flex flex-col items-center">
           <div className="relative w-24 h-24 mb-4">
@@ -190,6 +203,16 @@ const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
             className="bg-blue-600 text-white px-4 py-2 rounded-xl shadow hover:bg-blue-700 transition"
           >
             Save Profile
+          </button>
+          
+          <button
+            onClick={() => {
+              localStorage.removeItem("token"); // clear token
+              window.location.href = "/login"; // redirect to login page
+            }}
+            className="flex-1 bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700 transition"
+          >
+            Logout
           </button>
         </div>
 
