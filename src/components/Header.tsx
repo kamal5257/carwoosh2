@@ -13,7 +13,7 @@ interface HeaderProps {
   cartCount?: number;
   view?: "services" | "parts";
   onViewChange?: (v: "services" | "parts") => void;
-  onSearch?: (query: string, context: "services" | "parts") => void; // NEW
+  onSearch?: (query: string, context: "services" | "parts") => void;
 }
 
 export const Header = ({
@@ -22,7 +22,7 @@ export const Header = ({
   onViewChange,
   onSearch,
 }: HeaderProps) => {
-  const [searchQuery, setSearchQuery] = useState(""); // NEW
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState<number>(externalCount);
@@ -49,7 +49,7 @@ export const Header = ({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    if (onSearch) onSearch(query, view); // NEW: pass query + context to parent
+    if (onSearch) onSearch(query, view);
   };
 
   const goHomeAndSetView = (targetView: "services" | "parts") => {
@@ -66,18 +66,18 @@ export const Header = ({
       {/* Desktop Header */}
       <header className="desktop-header hidden md:flex fixed top-0 left-0 right-0 bg-gray-50 border-b border-gray-300 shadow-sm z-50">
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
-          <Link
-            href="/"
-            className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors"
-          >
-            CarCare
+          <Link href="/" className="flex items-center no-underline">
+            <span className="text-2xl font-bold text-gray-600">Car</span>
+            <span className="text-2xl font-bold text-blue-400">Woosh</span>
           </Link>
 
           {/* Desktop Search */}
           <div className="desktop-search w-full max-w-lg mx-6">
             <input
               type="text"
-              placeholder={`Search ${view === "services" ? "services" : "products"}...`}
+              placeholder={`Search ${
+                view === "services" ? "services" : "products"
+              }...`}
               className="search-input w-full px-3 py-1 rounded-md border border-gray-400 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
               value={searchQuery}
               onChange={handleSearchChange}
@@ -119,6 +119,32 @@ export const Header = ({
               </div>
             )}
           </div>
+        </div>
+      </header>
+
+      {/* ✅ Mobile Top Header */}
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-gray-50 border-b border-gray-300 shadow-sm z-50 flex items-center justify-between px-4 py-2">
+        <Link href="/" className="flex items-center no-underline">
+            <span className="text-2xl font-bold text-gray-600">Car</span>
+            <span className="text-2xl font-bold text-blue-400">Woosh</span>
+          </Link>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="text-gray-700 hover:text-blue-600"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+          <Link href="/cart" className="relative text-gray-700 hover:text-blue-600">
+            <ShoppingCart className="h-5 w-5" />
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
+          <button
+            onClick={() => router.push("/profile")}
+            className="text-gray-700 hover:text-blue-600"
+          >
+            <User className="h-5 w-5" />
+          </button>
         </div>
       </header>
 
@@ -176,7 +202,9 @@ export const Header = ({
           <div className="bg-gray-50 rounded-xl shadow-lg w-[90%] max-w-md p-4">
             <input
               type="text"
-              placeholder={`Search ${view === "services" ? "services" : "products"}...`}
+              placeholder={`Search ${
+                view === "services" ? "services" : "products"
+              }...`}
               value={searchQuery}
               onChange={handleSearchChange}
               autoFocus
