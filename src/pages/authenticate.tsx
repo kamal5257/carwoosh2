@@ -159,6 +159,8 @@ export default function AuthPage() {
                 borderRadius: 4,
                 boxShadow:
                   "0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)",
+                  backfaceVisibility: "hidden",
+                bgcolor: "white",
               }}
             >
               <Typography variant="h5" align="center" gutterBottom fontWeight={700}>
