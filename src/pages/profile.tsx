@@ -208,7 +208,7 @@ const ProfilePage = () => {
           <button
             onClick={() => {
               localStorage.removeItem("token"); // clear token
-              window.location.href = "/login"; // redirect to login page
+              window.location.href = "/authenticate"; // redirect to login page
             }}
             className="flex-1 bg-red-600 text-white px-4 py-2 rounded-xl shadow hover:bg-red-700 transition"
           >
