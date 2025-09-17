@@ -78,9 +78,21 @@ export default function SignupPage() {
         style={{ width: "100%", maxWidth: 400 }}
       >
         <Paper elevation={3} sx={{ p: 4, width: "100%", borderRadius: 3 }}>
-          <Typography variant="h4" align="center" gutterBottom>
-            Sign Up
-          </Typography>
+          <Typography
+              variant="h5"
+              align="center"
+              gutterBottom
+              sx={{ fontWeight: 700 }}
+            >
+              Welcome 👋
+            </Typography>
+            <Typography
+              variant="body2"
+              align="center"
+              sx={{ mb: 3, color: "text.secondary" }}
+            >
+              Sign up to be a member of <strong>CarWoosh</strong>
+            </Typography>
 
           {message && (
             <Alert severity={message.includes("✅") ? "success" : "error"} sx={{ mb: 2 }}>

@@ -33,5 +33,5 @@ export function isTokenExpired(token: string): boolean {
 
 export function logout() {
   clearToken();
-  window.location.href = "/login"; // redirect to login
+  window.location.href = "/authenticate"; // redirect to login
 }
