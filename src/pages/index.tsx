@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { getToken, isTokenExpired, logout } from "@/utils/auth";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Sidebar } from "@/components/SideBar";
 import { addToCart } from "@/utils/cart";
 import { BookService } from "@/components/BookService";
 import {
@@ -93,6 +94,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
+    
       <Header
         cartCount={4}
         view={view}

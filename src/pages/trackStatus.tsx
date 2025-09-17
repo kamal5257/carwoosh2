@@ -6,8 +6,11 @@ import { ServiceStatus } from "@/components/ServiceStatus";
 import { PartStatus } from "@/components/PartStatus";
 
 type ViewType = "services" | "parts";
+interface Props {
+  onBack: () => void;
+}
 
-export default function TrackStatus() {
+export default function TrackStatus({ onBack }: Props) {
   const [view, setView] = useState<ViewType>("services");
 
   return (
