@@ -80,7 +80,7 @@ export default function StockAlert() {
           <TableHead>
             <TableRow>
               <TableCell>Part</TableCell>
-              <TableCell>SKU</TableCell>
+              
               <TableCell>Stock</TableCell>
               <TableCell>Reorder At</TableCell>
               <TableCell>Supplier</TableCell>
@@ -106,7 +106,7 @@ export default function StockAlert() {
                     </Stack>
                   </TableCell>
 
-                  <TableCell>{it.sku}</TableCell>
+                  
 
                   <TableCell>
                     <Stack direction="row" spacing={1} alignItems="center">
