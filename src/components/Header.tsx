@@ -147,7 +147,7 @@ export const Header = ({
       className="flex items-center focus:outline-none flex-shrink-0"
     >
       <Image
-        src={avatar || "/images/user-avatar.png"}
+        src={"/public/images/profile/user_2_1758004589919_WhatsApp Image 2025-09-14 at 14.52.53.jpeg"}
         alt="Profile"
         width={36}
         height={36}

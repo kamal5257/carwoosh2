@@ -140,14 +140,7 @@ export default function StockAlert() {
                         Reorder
                       </Button>
 
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleRefresh(it.id)}
-                        startIcon={<RefreshCcw size={14} />}
-                      >
-                        Refresh
-                      </Button>
+                      
                     </Stack>
                   </TableCell>
                 </TableRow>

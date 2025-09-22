@@ -182,7 +182,6 @@ export default function DashboardPage() {
         {view === "inventory" && (
           <>
             <PartsInventory />
-            <StockAlert />
           </>
         )}
       </Box>
