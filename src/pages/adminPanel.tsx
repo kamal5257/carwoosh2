@@ -17,7 +17,6 @@ import {
   CardContent,
   Stack,
   Rating,
-  Divider,
 } from "@mui/material";
 import { MessageCircle, X } from "lucide-react";
 import { Tooltip } from "@mui/material";
@@ -27,7 +26,6 @@ import DashboardCards from "@/components/Dashboard/DashboardCards";
 import SalesBarChart from "@/components/Dashboard/SalesBarChart";
 import ServiceList from "@/components/Dashboard/ServiceList";
 import PartsInventory from "@/components/Dashboard/PartsInventory";
-import ComplaintsManagement from "@/components/Dashboard/ComplaintsManagements";
 import StockAlert from "@/components/Dashboard/StockAlert";
 
 const feedbackData = {
@@ -131,9 +129,9 @@ export default function DashboardPage() {
   const [openStockAlert, setOpenStockAlert] = useState(false);
 
   return (
-    <Box bgcolor="#f5f5f5" minHeight="100vh" py={4} position="relative">
+    <Box bgcolor="#f5f5f5" minHeight="100vh" py={11} position="relative">
       <Box sx={{ maxWidth: "1200px", mx: "auto", px: { xs: 2, md: 4 } }}>
-        <Typography variant="h4" fontWeight={700} mb={3}>
+        <Typography variant="h4" fontWeight={700} mb={2} color="#333">
           Dashboard Overview
         </Typography>
 

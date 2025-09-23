@@ -52,7 +52,7 @@ export default function MyVehicle() {
   });
 
   return (
-    <Box bgcolor="#f5f5f5" minHeight="100vh" py={7} sx={{ width: "100%", overflowX: "hidden" }}>
+    <Box bgcolor="#f5f5f5" minHeight="100vh" py={9} sx={{ width: "100%", overflowX: "hidden" }}>
       {/* ✅ Centered Container */}
       <Box
         sx={{

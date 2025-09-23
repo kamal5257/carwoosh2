@@ -56,7 +56,7 @@ export const Header = ({
         setAvatar(`${user.profilePic || null}`);
       } catch (error) {
         console.error("Error fetching user:", error);
-      } 
+      }
     };
     fetchUserData();
 
@@ -95,18 +95,24 @@ export const Header = ({
         <div className="container mx-auto flex items-center justify-between px-4 py-3">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center no-underline">
-            <span className="text-2xl font-bold text-gray-600">Car</span>
-            <span className="text-2xl font-bold text-blue-400">Woosh</span>
+            <Image
+              src="/logo.png"
+              alt="CarWoosh Logo"
+              width={120}
+              height={40}
+              className="h-12 w-auto"
+              priority // loads it faster
+            />
           </Link>
+
 
           {/* ✅ Center: Search */}
           <div className="flex-1 flex justify-center mx-6">
             <div className="w-full max-w-lg">
               <input
                 type="text"
-                placeholder={`Search ${
-                  view === "services" ? "services" : "products"
-                }...`}
+                placeholder={`Search ${view === "services" ? "services" : "products"
+                  }...`}
                 className="search-input w-full px-3 py-1 rounded-md border border-gray-400 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                 value={searchQuery}
                 onChange={handleSearchChange}
@@ -114,81 +120,81 @@ export const Header = ({
             </div>
           </div>
 
-         {/* ✅ Right: Links + Cart + Profile */}
-<div className="relative flex items-center space-x-4">
-  {/* Quick Links */}
-  <Link
-    href="/trackStatus"
-    className="text-gray-700 hover:text-blue-600 text-sm font-medium"
-  >
-    Track Status
-  </Link>
+          {/* ✅ Right: Links + Cart + Profile */}
+          <div className="relative flex items-center space-x-4">
+            {/* Quick Links */}
+            <Link
+              href="/trackStatus"
+              className="text-gray-700 hover:text-blue-600 text-sm font-medium"
+            >
+              Track Status
+            </Link>
 
-  <Link
-    href="/orderHistory"
-    className="text-gray-700 hover:text-blue-600 text-sm font-medium"
-  >
-    Order History
-  </Link>
+            <Link
+              href="/orderHistory"
+              className="text-gray-700 hover:text-blue-600 text-sm font-medium"
+            >
+              Order History
+            </Link>
 
-  {/* Cart */}
-  <Link
-    href="/cart"
-    className="relative text-gray-700 hover:text-blue-600 transition-colors"
-  >
-    <ShoppingCart className="h-6 w-6" />
-    {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-  </Link>
+            {/* Cart */}
+            <Link
+              href="/cart"
+              className="relative text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              <ShoppingCart className="h-6 w-6" />
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+            </Link>
 
-  {/* ✅ Profile Avatar */}
-  <div className="relative">
-    <button
-      onClick={() => setMenuOpen(!menuOpen)}
-      className="flex items-center focus:outline-none flex-shrink-0"
-    >
-      <Image
-        src={"/public/images/profile/user_2_1758004589919_WhatsApp Image 2025-09-14 at 14.52.53.jpeg"}
-        alt="Profile"
-        width={36}
-        height={36}
-        className="rounded-full border border-gray-300 hover:scale-105 transition"
-      />
-    </button>
+            {/* ✅ Profile Avatar */}
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center focus:outline-none flex-shrink-0"
+              >
+                <Image
+                  src={"/public/images/profile/user_2_1758004589919_WhatsApp Image 2025-09-14 at 14.52.53.jpeg"}
+                  alt="Profile"
+                  width={36}
+                  height={36}
+                  className="rounded-full border border-gray-300 hover:scale-105 transition"
+                />
+              </button>
 
-    {/* Dropdown Menu */}
-    {menuOpen && (
-      <div className="absolute right-0 top-12 bg-white border border-gray-300 shadow-lg rounded-lg w-48 py-2 z-50">
-        <Link
-          href="/myVehicle"
-          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-          onClick={() => setMenuOpen(false)}
-        >
-          <Car className="h-4 w-4" /> My Vehicles
-        </Link>
-        <Link
-          href="/complaints"
-          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-          onClick={() => setMenuOpen(false)}
-        >
-          <MessageCircle className="h-4 w-4" /> Complaints
-        </Link>
-        <Link
-          href="/profile"
-          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-          onClick={() => setMenuOpen(false)}
-        >
-          <User className="h-4 w-4" /> Profile
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
-        >
-          <LogOut className="h-4 w-4" /> Logout
-        </button>
-      </div>
-    )}
-  </div>
-</div>
+              {/* Dropdown Menu */}
+              {menuOpen && (
+                <div className="absolute right-0 top-12 bg-white border border-gray-300 shadow-lg rounded-lg w-48 py-2 z-50">
+                  <Link
+                    href="/myVehicle"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Car className="h-4 w-4" /> My Vehicles
+                  </Link>
+                  <Link
+                    href="/complaints"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <MessageCircle className="h-4 w-4" /> Complaints
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <User className="h-4 w-4" /> Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
         </div>
       </header>
@@ -225,8 +231,8 @@ export const Header = ({
           <button
             onClick={() => goHomeAndSetView("services")}
             className={`nav-item flex flex-col items-center ${view === "services"
-                ? "text-blue-600 font-bold"
-                : "text-gray-700 hover:text-blue-600"
+              ? "text-blue-600 font-bold"
+              : "text-gray-700 hover:text-blue-600"
               }`}
           >
             <Wrench className="h-5 w-5" />
@@ -236,8 +242,8 @@ export const Header = ({
           <button
             onClick={() => goHomeAndSetView("parts")}
             className={`nav-item flex flex-col items-center ${view === "parts"
-                ? "text-blue-600 font-bold"
-                : "text-gray-700 hover:text-blue-600"
+              ? "text-blue-600 font-bold"
+              : "text-gray-700 hover:text-blue-600"
               }`}
           >
             <Home className="h-5 w-5" />

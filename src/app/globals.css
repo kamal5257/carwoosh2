@@ -25,5 +25,13 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Hide header + bottom nav ONLY on mobile */
+@media (max-width: 768px) {
+  .hidden-on-mobile {
+    display: none !important;
+  }
+}
+
+
 
 
