@@ -6,44 +6,45 @@ import { X } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const router = useRouter();
+  const BASE_URL = "https://carwoosh.onrender.com";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://carwoosh.onrender.com/api/users/forgotPassword",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username }),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/users/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
 
       const data = await response.json();
-      console.log("Forgot password response:", data);
 
       if (data.statusCode === "APP_001") {
         router.push(
-          `/VerifyOTP?txnId=${encodeURIComponent(
-            data.txnId
-          )}&username=${encodeURIComponent(username)}`
+          `/VerifyOTP?txnId=${encodeURIComponent(data.txnId)}&username=${encodeURIComponent(username)}`
         );
       } else {
-        alert(data.message || "User not found or something went wrong");
+        setError(data.message || "User not found or something went wrong");
       }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      console.error("Forgot password error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      {/* ✅ Wrap everything in a relative container */}
       <div className="relative w-full max-w-md">
-        {/* ✅ Correctly positioned X button */}
+        {/* Close Button */}
         <button
           type="button"
           onClick={() => router.push("/authenticate")}
@@ -52,7 +53,7 @@ export default function ForgotPasswordPage() {
           <X className="h-6 w-6 text-gray-600" />
         </button>
 
-        {/* Form */}
+        {/* Form Container */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-2xl shadow-lg w-full"
@@ -71,17 +72,22 @@ export default function ForgotPasswordPage() {
             id="username"
             type="text"
             placeholder="Enter your username"
-            className="w-full p-3 mb-6 border border-gray-300 text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+            className="w-full p-3 mb-4 border border-gray-300 text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
 
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg text-lg font-semibold text-white transition ${
+              loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Send OTP
+            {loading ? "Sending OTP..." : "Send OTP"}
           </button>
         </form>
       </div>

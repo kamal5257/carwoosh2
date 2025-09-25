@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function IntroPage() {
     const [showContent, setShowContent] = useState(false);
@@ -60,7 +61,7 @@ export default function IntroPage() {
             </motion.div>
 
             {/* Typing Text */}
-            <motion.p className="text-gray-800 text-lg sm:text-xl md:text-2xl font-semibold max-w-xl z-20">
+            <motion.p className="text-gray-700 text-lg sm:text-xl md:text-2xl font-semibold max-w-xl z-20">
                 {typedText}
             </motion.p>
 
@@ -75,7 +76,7 @@ export default function IntroPage() {
                     src="/car.png"
                     alt="Car Driving"
                     width={200}
-                    height={100}
+                    height={90}
                     className="w-full h-auto"
                 />
             </motion.div>
@@ -89,9 +90,11 @@ export default function IntroPage() {
                     transition={{ duration: 0.6, delay: 0.5 }}
                     className="mt-12 sm:mt-16 flex flex-col sm:flex-row items-center gap-4 z-20"
                 >
-                    <Button size="lg" className="bg-blue-500 hover:bg-blue-600 text-white">
-                        Log In
-                    </Button>
+                    <Link href="/authenticate">
+                        <Button size="lg" className="bg-blue-500 hover:bg-blue-600 text-white">
+                            Log In
+                        </Button>
+                    </Link>
                 </motion.div>
             )}
         </div>

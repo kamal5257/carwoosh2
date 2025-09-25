@@ -14,7 +14,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Header } from "@/components/Header";
+import { Header } from "@/components/Header/Header";
 import { Plus, Minus, X } from "lucide-react"; // ✅ Added X icon
 
 type CartItem = {
